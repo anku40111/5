@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lifestyle & Hobbies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Lifestyle & Hobbies — practical guides and inspiration for travel, cooking, photography, and DIY."
+    />
+    <style>
+      /* Color palette (3-5 colors): primary blue + neutrals + subtle accent
+         Primary: #2563eb, Accent: #f59e0b, Neutrals: #111827, #6b7280, #f3f4f6, #ffffff */
+      :root {
+        --brand: #2563eb;      /* primary */
+        --accent: #f59e0b;     /* subtle accent for tags */
+        --bg: #ffffff;
+        --bg-alt: #f3f4f6;
+        --fg: #111827;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --radius: 12px;
+        --shadow: 0 8px 30px rgba(0,0,0,0.06);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+        color: var(--fg);
+        background: var(--bg);
+        line-height: 1.6;
+      }
+
+      /* Header */
+      .header {
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .container {
+        width: min(1120px, 92%);
+        margin: 0 auto;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+      .brand img {
+        width: 38px; height: 38px; border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+      .menu {
+        display: flex; gap: 14px; flex-wrap: wrap;
+      }
+      .menu a {
+        text-decoration: none;
+        color: var(--fg);
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+      }
+      .menu a:hover {
+        border-color: var(--border);
+        background: var(--bg-alt);
+      }
+
+      /* Hero/featured */
+      .hero {
+        padding: 28px 0 8px;
+      }
+      .featured-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 16px;
+      }
+      @media (max-width: 900px) {
+        .featured-grid { grid-template-columns: 1fr; }
+      }
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+      }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,0.08); }
+      .card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+      }
+      .card-body {
+        padding: 14px 14px 16px;
+        display: flex; flex-direction: column; gap: 8px;
+      }
+      .meta {
+        display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        font-size: 12px; color: var(--muted);
+      }
+      .badge {
+        background: var(--bg-alt);
+        border: 1px solid var(--border);
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .title { margin: 0; font-size: 18px; line-height: 1.35; }
+      .desc { margin: 0; color: var(--muted); font-size: 14px; }
+
+      /* Two tall cards on the right of featured */
+      .stack { display: grid; gap: 16px; }
+
+      /* Sections */
+      .section { padding: 12px 0 26px; }
+      .section h2 { font-size: 18px; margin: 0 0 12px; letter-spacing: .2px; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.46);
+        display: none;
+        align-items: center; justify-content: center;
+        padding: 20px;
+        z-index: 50;
+      }
+      .modal-overlay.active { display: flex; }
+      .modal {
+        width: min(860px, 96vw);
+        max-height: 88vh;
+        overflow: auto;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: calc(var(--radius) + 2px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+      }
+      .modal-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 16px; border-bottom: 1px solid var(--border);
+      }
+      .modal-header h3 { margin: 0; font-size: 18px; }
+      .close-btn {
+        appearance: none;
+        background: var(--bg-alt);
+        border: 1px solid var(--border);
+        color: var(--fg);
+        padding: 6px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .modal-body {
+        padding: 12px 16px 18px;
+        display: grid; gap: 12px;
+      }
+      .modal-hero {
+        width: 100%; border-radius: 8px; height: 280px; object-fit: cover;
+        border: 1px solid var(--border);
+      }
+      .modal-meta { color: var(--muted); font-size: 13px; }
+      .modal-content p { margin: 0 0 10px; }
+      .modal-content ul { margin: 0 0 12px 18px; }
+      .sr-only { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <header class="header" role="banner">
+      <div class="container">
+        <nav class="nav" aria-label="Primary">
+          <a href="#" class="brand" aria-label="Lifestyle & Hobbies Home">
+            <img src="https://outoftrouble.org.uk/wp-content/uploads/2021/09/cropped-OOT-logo.png" alt="Site logo" />
+            <h1>Lifestyle & Hobbies</h1>
+          </a>
+          <div class="menu" role="navigation">
+            <a href="#home">Home</a>
+            <a href="#travel">Travel</a>
+            <a href="#cooking">Cooking</a>
+            <a href="#photography">Photography</a>
+            <a href="#diy">DIY Crafts</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main id="home" class="container" role="main">
+       
+      <section class="hero" aria-label="Featured articles">
+        <div class="featured-grid">
+        
+          <article class="card" data-article="city-weekend-guide" aria-label="Open article: The Perfect City-Weekend Guide">
+            <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1600&q=80" alt="Skyline over a vibrant city at golden hour" />
+            <div class="card-body">
+              <div class="meta">
+                <span class="badge">Travel</span>
+                <span>By Alex Reed</span>
+                <span>•</span>
+                <span>Aug 12, 2025</span>
+              </div>
+              <h3 class="title">The Perfect City-Weekend Guide</h3>
+              <p class="desc">How to plan a 48-hour escape with food, culture, and hidden gems—without breaking the bank.</p>
+            </div>
+          </article>
+
+          <div class="stack">
+            <article class="card" data-article="elevate-home-coffee" aria-label="Open article: 7 Ways to Elevate Your Home Coffee">
+              <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=80" alt="A barista-style coffee setup on a kitchen counter" />
+              <div class="card-body">
+                <div class="meta">
+                  <span class="badge">Cooking</span>
+                  <span>By Jamie Park</span>
+                  <span>•</span>
+                  <span>Aug 9, 2025</span>
+                </div>
+                <h3 class="title">7 Ways to Elevate Your Home Coffee</h3>
+                <p class="desc">From grind size to water temperature—pro tips for café-quality brews at home.</p>
+              </div>
+            </article>
+
+            <article class="card" data-article="mobile-photography-pro" aria-label="Open article: Mobile Photography Like a Pro">
+              <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80" alt="Person framing a sunset shot with a smartphone" />
+              <div class="card-body">
+                <div class="meta">
+                  <span class="badge">Photography</span>
+                  <span>By Nia Gomez</span>
+                  <span>•</span>
+                  <span>Aug 7, 2025</span>
+                </div>
+                <h3 class="title">Mobile Photography Like a Pro</h3>
+                <p class="desc">Master composition, light, and editing—no expensive gear required.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+   
+      <section id="travel" class="section" aria-labelledby="travel-title">
+        <h2 id="travel-title">Travel</h2>
+        <div class="grid">
+          <article class="card" data-article="backpacking-basics-europe" aria-label="Open article: Backpacking Basics: Europe">
+            <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80" alt="Traveler walking across an old European bridge with a backpack" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Travel</span><span>By Lee Chen</span><span>•</span><span>Aug 4, 2025</span></div>
+              <h3 class="title">Backpacking Basics: Europe</h3>
+              <p class="desc">Routes, budgets, and must-pack items for first-time backpackers.</p>
+            </div>
+          </article>
+          <article class="card" data-article="carryon-only-hack" aria-label="Open article: The Carry-On Only Hack">
+            <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1600&q=80" alt="Minimalist suitcase and neatly packed travel cubes" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Travel</span><span>By Priya Patel</span><span>•</span><span>Aug 2, 2025</span></div>
+              <h3 class="title">The Carry-On Only Hack</h3>
+              <p class="desc">What to bring—and what to ditch—to breeze through any trip.</p>
+            </div>
+          </article>
+          <article class="card" data-article="budget-friendly-staycations" aria-label="Open article: Budget-Friendly Staycations">
+            <img src="https://curlytales.com/wp-content/uploads/2025/06/Hyatt-Centric.jpg" alt="Cozy living room set up like a mini retreat" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Travel</span><span>By Sam Rivera</span><span>•</span><span>Jul 28, 2025</span></div>
+              <h3 class="title">Budget-Friendly Staycations</h3>
+              <p class="desc">Rediscover your city with a fresh itinerary and local-only perks.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+       Cooking 
+      <section id="cooking" class="section" aria-labelledby="cooking-title">
+        <h2 id="cooking-title">Cooking</h2>
+        <div class="grid">
+          <article class="card" data-article="sheet-pan-dinners" aria-label="Open article: 5 Sheet-Pan Dinners">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80" alt="Colorful sheet pan with roasted vegetables and chicken" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Cooking</span><span>By Jordan Lee</span><span>•</span><span>Jul 30, 2025</span></div>
+              <h3 class="title">5 Sheet-Pan Dinners</h3>
+              <p class="desc">Balanced, 30-minute meals that practically cook themselves.</p>
+            </div>
+          </article>
+          <article class="card" data-article="meal-prep-mastery" aria-label="Open article: Meal Prep Mastery">
+            <img src="https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=1600&q=80" alt="Stacked glass containers with healthy prepared meals" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Cooking</span><span>By Taylor Brooks</span><span>•</span><span>Jul 27, 2025</span></div>
+              <h3 class="title">Meal Prep Mastery</h3>
+              <p class="desc">A simple plan for saving time and eating better—consistently.</p>
+            </div>
+          </article>
+          <article class="card" data-article="sourdough-for-beginners" aria-label="Open article: Sourdough for Beginners">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS99FDIkkMR3hV7zKfvMc-KJ3LHCWbZTTl7lw&s" alt="Freshly baked sourdough loaf on a wooden board" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Cooking</span><span>By Casey Morgan</span><span>•</span><span>Jul 22, 2025</span></div>
+              <h3 class="title">Sourdough for Beginners</h3>
+              <p class="desc">Starter care, basic formulas, and troubleshooting common issues.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+       Photography 
+      <section id="photography" class="section" aria-labelledby="photo-title">
+        <h2 id="photo-title">Photography</h2>
+        <div class="grid">
+          <article class="card" data-article="portrait-lighting-101" aria-label="Open article: Portrait Lighting 101">
+            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80" alt="Soft window light illuminating a portrait subject" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Photography</span><span>By Mira Akhtar</span><span>•</span><span>Jul 25, 2025</span></div>
+              <h3 class="title">Portrait Lighting 101</h3>
+              <p class="desc">Shape faces with natural and artificial light—simply and beautifully.</p>
+            </div>
+          </article>
+          <article class="card" data-article="edit-like-a-pro" aria-label="Open article: Edit Like a Pro">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1600&q=80" alt="Before-and-after photo edit comparison on a laptop" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Photography</span><span>By Ren Ito</span><span>•</span><span>Jul 20, 2025</span></div>
+              <h3 class="title">Edit Like a Pro</h3>
+              <p class="desc">A clean editing workflow for consistent, natural-looking results.</p>
+            </div>
+          </article>
+          <article class="card" data-article="street-photography-tips" aria-label="Open article: Street Photography Tips">
+            <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80" alt="Candid moment on a busy city street" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">Photography</span><span>By Theo Ramos</span><span>•</span><span>Jul 18, 2025</span></div>
+              <h3 class="title">Street Photography Tips</h3>
+              <p class="desc">Blend in, anticipate, and tell a story in a single frame.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+       DIY Crafts 
+      <section id="diy" class="section" aria-labelledby="diy-title">
+        <h2 id="diy-title">DIY Crafts</h2>
+        <div class="grid">
+          <article class="card" data-article="weekend-wood-projects" aria-label="Open article: Weekend Wood Projects">
+            <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=80" alt="Simple wooden shelf being assembled on a workbench" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">DIY</span><span>By Chris Nolan</span><span>•</span><span>Jul 16, 2025</span></div>
+              <h3 class="title">Weekend Wood Projects</h3>
+              <p class="desc">Three beginner-friendly builds with basic tools and materials.</p>
+            </div>
+          </article>
+          <article class="card" data-article="upcycled-home-decor" aria-label="Open article: Upcycled Home Decor">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqBHD8-DA-wF9PttMIW8smT9gaJTKbkN4QjA&s" alt="Painted glass jars repurposed as vases" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">DIY</span><span>By Dana Quinn</span><span>•</span><span>Jul 14, 2025</span></div>
+              <h3 class="title">Upcycled Home Decor</h3>
+              <p class="desc">Give old items new life with paint, fabric, and imagination.</p>
+            </div>
+          </article>
+          <article class="card" data-article="beginner-macrame" aria-label="Open article: Beginner Macramé">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_277VYpOD1HjLd_1hjHWictQykujhQyzLNw&s" alt="Macramé plant hanger hanging by a window" />
+            <div class="card-body">
+              <div class="meta"><span class="badge">DIY</span><span>By Ivy Flores</span><span>•</span><span>Jul 11, 2025</span></div>
+              <h3 class="title">Beginner Macramé</h3>
+              <p class="desc">Knots, patterns, and a simple plant hanger to start.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+     
+    <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modalTitle">Article</h3>
+          <button type="button" class="close-btn" id="modalCloseBtn" aria-label="Close">Close</button>
+        </div>
+        <div class="modal-body">
+          <img id="modalImage" class="modal-hero" src="/placeholder.jpg" alt="" />
+          <div id="modalMeta" class="modal-meta"></div>
+          <div id="modalContent" class="modal-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Structured article content for popups: each ID corresponds to a card's data-article attribute.
+      const articleData = {
+        /* Featured */
+        "city-weekend-guide": {
+          title: "The Perfect City-Weekend Guide",
+          image: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1600&q=80",
+          author: "Alex Reed",
+          date: "Aug 12, 2025",
+          category: "Travel",
+          content: `
+            <p>Make the most of 48 hours in any city with a flexible plan that balances food, culture, and unexpected discoveries.</p>
+            <ul>
+              <li><strong>Day 1 AM:</strong> Start with a walking tour to orient yourself and note neighborhoods to revisit.</li>
+              <li><strong>Day 1 PM:</strong> Book one “destination” dinner and leave space for a spontaneous dessert stop.</li>
+              <li><strong>Day 2 AM:</strong> Visit a market or museum early to beat crowds; support local artisans.</li>
+              <li><strong>Day 2 PM:</strong> Seek a skyline view or waterfront stroll to close out your trip calmly.</li>
+            </ul>
+            <p>Pro tip: cluster your activities by neighborhood to cut transit time and maximize enjoyment.</p>
+          `
+        },
+        "elevate-home-coffee": {
+          title: "7 Ways to Elevate Your Home Coffee",
+          image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=80",
+          author: "Jamie Park",
+          date: "Aug 9, 2025",
+          category: "Cooking",
+          content: `
+            <p>Better beans only go so far. Dial in grind size, water-to-coffee ratio, and temperature to unlock café-level flavor.</p>
+            <ul>
+              <li>Use a burr grinder for consistency.</li>
+              <li>Try a 1:16 brew ratio, then adjust to taste.</li>
+              <li>Heat water to 92–96°C (197–205°F).</li>
+              <li>Store beans in an airtight, opaque container away from heat and light.</li>
+            </ul>
+            <p>Experiment with pour-over, French press, and AeroPress to find your sweet spot.</p>
+          `
+        },
+        "mobile-photography-pro": {
+          title: "Mobile Photography Like a Pro",
+          image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80",
+          author: "Nia Gomez",
+          date: "Aug 7, 2025",
+          category: "Photography",
+          content: `
+            <p>Great shots hinge on light and composition—not gear. Use leading lines, the rule of thirds, and clean backgrounds.</p>
+            <ul>
+              <li>Tap to set focus and exposure; slide to adjust brightness.</li>
+              <li>Shoot during golden hour for flattering light.</li>
+              <li>Keep lenses clean for sharper images.</li>
+            </ul>
+            <p>Wrap up with non-destructive edits that preserve natural color and skin tones.</p>
+          `
+        },
+
+        /* Travel */
+        "backpacking-basics-europe": {
+          title: "Backpacking Basics: Europe",
+          image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+          author: "Lee Chen",
+          date: "Aug 4, 2025",
+          category: "Travel",
+          content: `
+            <p>Plan point-to-point routes with 2–3 nights per city to balance variety and rest. Use rail passes for flexibility.</p>
+            <ul>
+              <li>Pack layers: a light rain shell, merino base, and comfy shoes.</li>
+              <li>Book anchor stays, leave gaps for spontaneous detours.</li>
+              <li>Scan local events: night markets, free galleries, seasonal festivals.</li>
+            </ul>
+            <p>Keep copies of documents and learn basic phrases—locals appreciate the effort.</p>
+          `
+        },
+        "carryon-only-hack": {
+          title: "The Carry-On Only Hack",
+          image: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1600&q=80",
+          author: "Priya Patel",
+          date: "Aug 2, 2025",
+          category: "Travel",
+          content: `
+            <p>Travel lighter and faster by embracing constraints. Choose a single color palette and multi-use layers.</p>
+            <ul>
+              <li>Compression cubes and a small laundry kit extend outfits.</li>
+              <li>Wear bulkier shoes on the plane.</li>
+              <li>Digitize documents and tickets for quick access.</li>
+            </ul>
+            <p>Less to carry means more energy to enjoy your destination.</p>
+          `
+        },
+        "budget-friendly-staycations": {
+          title: "Budget-Friendly Staycations",
+          image: "https://images.unsplash.com/photo-1505691723518-36a5ac3b2a59?auto=format&fit=crop&w=1600&q=80",
+          author: "Sam Rivera",
+          date: "Jul 28, 2025",
+          category: "Travel",
+          content: `
+            <p>Turn home into a retreat: themed dinners, neighborhood hikes, and tech-free hours restore energy without flights.</p>
+            <ul>
+              <li>Create an itinerary: museum morning, park picnic, indie film night.</li>
+              <li>Support local: coffee roasters, bakeries, craft markets.</li>
+            </ul>
+            <p>Intentional planning makes familiar places feel fresh.</p>
+          `
+        },
+
+        /* Cooking */
+        "sheet-pan-dinners": {
+          title: "5 Sheet-Pan Dinners",
+          image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80",
+          author: "Jordan Lee",
+          date: "Jul 30, 2025",
+          category: "Cooking",
+          content: `
+            <p>One pan, minimal prep, big flavor. Balance protein, veg, and starch for complete meals.</p>
+            <ul>
+              <li>Chicken + potatoes + green beans; toss with olive oil and paprika.</li>
+              <li>Salmon + asparagus + lemon; finish with dill yogurt.</li>
+              <li>Chickpeas + cauliflower + curry spice; add cilantro and lime.</li>
+            </ul>
+            <p>Line with parchment for easy cleanup.</p>
+          `
+        },
+        "meal-prep-mastery": {
+          title: "Meal Prep Mastery",
+          image: "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=1600&q=80",
+          author: "Taylor Brooks",
+          date: "Jul 27, 2025",
+          category: "Cooking",
+          content: `
+            <p>Batch cook grains, proteins, and sauces to mix and match all week.</p>
+            <ul>
+              <li>Sunday: roast veggies; cook quinoa and chicken; blend a tahini sauce.</li>
+              <li>Portion into glass containers; label dates.</li>
+              <li>Keep 1–2 freezer-friendly options for busy nights.</li>
+            </ul>
+            <p>Consistency beats complexity—repeat winning combos.</p>
+          `
+        },
+        "sourdough-for-beginners": {
+          title: "Sourdough for Beginners",
+          image: "https://images.unsplash.com/photo-1604908177073-f4f5405d5b75?auto=format&fit=crop&w=1600&q=80",
+          author: "Casey Morgan",
+          date: "Jul 22, 2025",
+          category: "Cooking",
+          content: `
+            <p>Healthy starter, proper fermentation, and gentle shaping are your pillars.</p>
+            <ul>
+              <li>Feed starter at a consistent ratio and temperature.</li>
+              <li>Bulk ferment until dough doubles and feels airy.</li>
+              <li>Use a preheated Dutch oven for oven spring.</li>
+            </ul>
+            <p>Track bakes in a simple log to speed up learning.</p>
+          `
+        },
+
+        /* Photography */
+        "portrait-lighting-101": {
+          title: "Portrait Lighting 101",
+          image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80",
+          author: "Mira Akhtar",
+          date: "Jul 25, 2025",
+          category: "Photography",
+          content: `
+            <p>Soft, directional light flatters faces. Start with window light at 45° and add a reflector.</p>
+            <ul>
+              <li>Feather your light to avoid hotspots.</li>
+              <li>Catchlights bring eyes to life—watch the reflections.</li>
+              <li>Use flags to control spill and contrast.</li>
+            </ul>
+            <p>Small adjustments dramatically change mood—experiment freely.</p>
+          `
+        },
+        "edit-like-a-pro": {
+          title: "Edit Like a Pro",
+          image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1600&q=80",
+          author: "Ren Ito",
+          date: "Jul 20, 2025",
+          category: "Photography",
+          content: `
+            <p>A consistent workflow keeps results natural. Adjust exposure, contrast, white balance, then fine-tune color.</p>
+            <ul>
+              <li>Use masks for targeted refinements.</li>
+              <li>Watch skin tones—avoid oversaturation.</li>
+              <li>Export with a sensible sharpening preset.</li>
+            </ul>
+            <p>Save your look as a preset to stay consistent.</p>
+          `
+        },
+        "street-photography-tips": {
+          title: "Street Photography Tips",
+          image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
+          author: "Theo Ramos",
+          date: "Jul 18, 2025",
+          category: "Photography",
+          content: `
+            <p>Anticipate moments by watching gestures and intersections. Move with purpose, then pause.</p>
+            <ul>
+              <li>Zone focus to react faster.</li>
+              <li>Lean into layers and reflections for depth.</li>
+              <li>Be respectful; a smile goes a long way.</li>
+            </ul>
+            <p>Tell stories about people, not just places.</p>
+          `
+        },
+
+        /* DIY */
+        "weekend-wood-projects": {
+          title: "Weekend Wood Projects",
+          image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=80",
+          author: "Chris Nolan",
+          date: "Jul 16, 2025",
+          category: "DIY",
+          content: `
+            <p>Build a wall shelf, planter box, or shoe rack with basic tools and pine boards.</p>
+            <ul>
+              <li>Measure twice, cut once—use a simple cut list.</li>
+              <li>Pre-sand and pre-drill for cleaner assembly.</li>
+              <li>Finish with water-based poly for durability.</li>
+            </ul>
+            <p>Start small; each project builds confidence and skills.</p>
+          `
+        },
+        "upcycled-home-decor": {
+          title: "Upcycled Home Decor",
+          image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqBHD8-DA-wF9PttMIW8smT9gaJTKbkN4QjA&s",
+          author: "Dana Quinn",
+          date: "Jul 14, 2025",
+          category: "DIY",
+          content: `
+            <p>Transform jars, crates, and old frames with paint, fabric, and imagination.</p>
+            <ul>
+              <li>Chalk paint + light distressing = vintage charm.</li>
+              <li>Use stencils for crisp patterns.</li>
+              <li>Seal surfaces on high-touch items.</li>
+            </ul>
+            <p>Customize colors to fit your room’s palette.</p>
+          `
+        },
+        "beginner-macrame": {
+          title: "Beginner Macramé",
+          image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_277VYpOD1HjLd_1hjHWictQykujhQyzLNw&s",
+          author: "Ivy Flores",
+          date: "Jul 11, 2025",
+          category: "DIY",
+          content: `
+            <p>Learn lark’s head, square, and half-hitch knots to create a simple plant hanger.</p>
+            <ul>
+              <li>Use cotton rope (3–5 mm) for easier handling.</li>
+              <li>Measure rope generously; trim later.</li>
+              <li>Comb fringe and steam for a polished finish.</li>
+            </ul>
+            <p>Once comfortable, experiment with wall hangings and color accents.</p>
+          `
+        }
+      };
+
+      const externalImages = {
+        "city-weekend-guide": "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1600&q=80",
+        "elevate-home-coffee": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=80",
+        "mobile-photography-pro": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80",
+
+        "backpacking-basics-europe": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+        "carryon-only-hack": "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1600&q=80",
+        "budget-friendly-staycations": "https://images.unsplash.com/photo-1505691723518-36a5ac3b2a59?auto=format&fit=crop&w=1600&q=80",
+
+        "sheet-pan-dinners": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80",
+        "meal-prep-mastery": "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=1600&q=80",
+        "sourdough-for-beginners": "https://images.unsplash.com/photo-1604908177073-f4f5405d5b75?auto=format&fit=crop&w=1600&q=80",
+
+        "portrait-lighting-101": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80",
+        "edit-like-a-pro": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1600&q=80",
+        "street-photography-tips": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
+
+        "weekend-wood-projects": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=80",
+        "upcycled-home-decor": "https://images.unsplash.com/photo-1523419409543-88eaf2f0f3b1?auto=format&fit=crop&w=1600&q=80",
+        "beginner-macrame": "https://images.unsplash.com/photo-1617040721597-3c3b3f6dff29?auto=format&fit=crop&w=1600&q=80",
+      };
+
+      Object.entries(externalImages).forEach(([id, url]) => {
+        if (articleData[id]) articleData[id].image = url;
+      });
+
+      function showFullArticle(id) {
+        const data = articleData[id];
+        if (!data) {
+          alert("Article details coming soon.");
+          return;
+        }
+        // Populate modal
+        const overlay = document.getElementById("modalOverlay");
+        const titleEl = document.getElementById("modalTitle");
+        const imgEl = document.getElementById("modalImage");
+        const metaEl = document.getElementById("modalMeta");
+        const contentEl = document.getElementById("modalContent");
+
+        titleEl.textContent = data.title;
+        imgEl.src = data.image;
+        imgEl.alt = data.title;
+        metaEl.innerHTML = `
+          <span class="badge">${data.category}</span>
+          <span>By ${data.author}</span>
+          <span>•</span>
+          <span>${data.date}</span>
+        `;
+        contentEl.innerHTML = data.content;
+
+        overlay.classList.add("active");
+      }
+
+      // Attach handlers
+      document.querySelectorAll("[data-article]").forEach((el) => {
+        el.addEventListener("click", () => showFullArticle(el.dataset.article));
+      });
+
+      // Close interactions
+      const overlay = document.getElementById("modalOverlay");
+      const closeBtn = document.getElementById("modalCloseBtn");
+      closeBtn.addEventListener("click", () => overlay.classList.remove("active"));
+      overlay.addEventListener("click", (e) => {
+        // Close when clicking outside the modal content
+        if (e.target === overlay) overlay.classList.remove("active");
+      });
+
+      // Keyboard accessibility: Escape to close
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") overlay.classList.remove("active");
+      });
+    </script>
+  </body>
+</html>
